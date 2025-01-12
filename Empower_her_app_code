@@ -1,0 +1,282 @@
+import 'package:flutter/material.dart';
+import 'dart:math';
+
+void main() {
+  runApp(FinancialApp());
+}
+
+class FinancialApp extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Financial App',
+      theme: ThemeData(
+        primarySwatch: Colors.pink,
+        fontFamily: 'Roboto',
+      ),
+      home: LoginScreen(),
+    );
+  }
+}
+
+class LoginScreen extends StatelessWidget {
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Welcome Back!',
+                style: TextStyle(
+                  fontSize: 28,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.pink,
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                'Login to continue',
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              ),
+              SizedBox(height: 30),
+              TextField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+              TextField(
+                controller: _passwordController,
+                obscureText: true,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                  );
+                },
+                child: Text('Login'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.pink,
+                  padding: EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class HomePage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Financial Dashboard'),
+        backgroundColor: Colors.pink,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(
+              child: ListView(
+                children: [
+                  FeatureCard(
+                    title: 'Loan Calculator',
+                    description:
+                    'Calculate your monthly loan repayments with ease.',
+                    icon: Icons.calculate,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => LoanCalculatorPage()),
+                      );
+                    },
+                  ),
+                  FeatureCard(
+                    title: 'Budget Tracker',
+                    description: 'Track your monthly expenses and savings.',
+                    icon: Icons.attach_money,
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => BudgetTrackerPage()),
+                      );
+                    },
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class FeatureCard extends StatelessWidget {
+  final String title;
+  final String description;
+  final IconData icon;
+  final VoidCallback onTap;
+
+  FeatureCard({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 5,
+      child: ListTile(
+        leading: Icon(icon, color: Colors.pink, size: 40),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        subtitle: Text(description),
+        trailing: Icon(Icons.arrow_forward, color: Colors.pink),
+        onTap: onTap,
+      ),
+    );
+  }
+}
+
+class LoanCalculatorPage extends StatefulWidget {
+  @override
+  _LoanCalculatorPageState createState() => _LoanCalculatorPageState();
+}
+
+class _LoanCalculatorPageState extends State<LoanCalculatorPage> {
+  final TextEditingController _loanAmountController = TextEditingController();
+  final TextEditingController _interestRateController = TextEditingController();
+  final TextEditingController _tenureController = TextEditingController();
+
+  double _emi = 0.0;
+
+  void _calculateEMI() {
+    final double principal = double.tryParse(_loanAmountController.text) ?? 0.0;
+    final double rate =
+        (double.tryParse(_interestRateController.text) ?? 0.0) / 12 / 100;
+    final int months = (int.tryParse(_tenureController.text) ?? 0) * 12;
+
+    if (rate > 0 && months > 0) {
+      setState(() {
+        _emi = (principal * rate * pow(1 + rate, months)) /
+            (pow(1 + rate, months) - 1);
+      });
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Loan Calculator'),
+        backgroundColor: Colors.pink,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            TextField(
+              controller: _loanAmountController,
+              decoration: InputDecoration(
+                labelText: 'Loan Amount (₹)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _interestRateController,
+              decoration: InputDecoration(
+                labelText: 'Interest Rate (%)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            TextField(
+              controller: _tenureController,
+              decoration: InputDecoration(
+                labelText: 'Tenure (Years)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: _calculateEMI,
+              child: Text('Calculate EMI'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.pink,
+              ),
+            ),
+            SizedBox(height: 20),
+            Text(
+              'Your EMI: ₹${_emi.toStringAsFixed(2)}',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BudgetTrackerPage extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Budget Tracker'),
+        backgroundColor: Colors.pink,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            ListTile(
+              leading: Icon(Icons.attach_money, color: Colors.green),
+              title: Text('Income'),
+              trailing: Text('₹50,000'),
+            ),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.shopping_cart, color: Colors.red),
+              title: Text('Expenses'),
+              trailing: Text('₹30,000'),
+            ),
+            Divider(),
+            ListTile(
+              leading: Icon(Icons.savings, color: Colors.blue),
+              title: Text('Savings'),
+              trailing: Text('₹20,000'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
