@@ -14,6 +14,7 @@ Empower Her is an Android application designed by Innovators Inc. to provide fin
 - **Video Explaining the Working Prototype**: [Watch Video](https://drive.google.com/drive/folders/18JN_hWGKO9vzUq2SQTnu2uquImznQTpx?usp=drive_link)
 - **Screenshots of the Working Prototype**: [View Here](https://drive.google.com/drive/folders/1Ok2OL94ymElP1VZ7aH8haiOFX3Y-g2sh?usp=sharing)
 
+(please download all the files for a proper and clear view)
 ---
 
 ## Setting Up the Project in Android Studio
